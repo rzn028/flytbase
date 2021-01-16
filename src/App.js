@@ -1,7 +1,7 @@
 import './styles/App.css';
 import React, { useEffect, useState } from 'react';
 import Box from './components/Box';
-import {directions} from './constants/constants';
+import { directions, colors } from './constants/constants';
 
 const App = () => {
 	const [ zIndex, setZIndex ] = useState(1);
@@ -9,16 +9,18 @@ const App = () => {
 	const [ selectedBox, setSelectedBox ] = useState();
 
 	const handleBoxClick = (boxId) => {
-		console.log(boxId);
 		setSelectedBox(boxId);
 	};
 
 	const addNewBox = () => {
+		const color = colors[Math.floor(Math.random() * 9)];
 		const box = {
 			id: zIndex,
 			marginLeft: 100,
 			marginTop: 100,
-			zIndex: zIndex
+			zIndex: zIndex,
+			bgColor: color.bgColor,
+			borderColor: color.borderColor
 		};
 		setZIndex((old) => old + 1);
 		setBoxes((old) => [ ...old, box ]);
@@ -30,7 +32,6 @@ const App = () => {
 			return;
 		}
 		const key = event.key.toLowerCase();
-		console.log(key, boxId);
 		switch (key) {
 			case 'w':
 				moveObject(boxId, directions.UP);
@@ -39,13 +40,12 @@ const App = () => {
 				moveObject(boxId, directions.DOWN);
 				break;
 			case 'a':
-				moveObject(boxId, directions.RIGHT);
-				break;
-			case 'd':
 				moveObject(boxId, directions.LEFT);
 				break;
+			case 'd':
+				moveObject(boxId, directions.RIGHT);
+				break;
 			case 'delete':
-				console.log('Here to delete', boxId);
 				setBoxes((boxes) => boxes.filter((box) => box.id !== boxId));
 			default:
 				break;
@@ -58,7 +58,7 @@ const App = () => {
 				setBoxes((boxes) =>
 					boxes.map((box) => {
 						if (box.id === boxId) {
-							const marginTop = box.marginTop - 1 > 0 ? box.marginTop - 1 : 0;
+							const marginTop = box.marginTop - 2 > 0 ? box.marginTop - 2 : 0;
 							return {
 								...box,
 								marginTop
@@ -74,9 +74,9 @@ const App = () => {
 					boxes.map((box) => {
 						if (box.id === boxId) {
 							const marginTop =
-								box.marginTop + 1 < window.innerHeight - 400
-									? box.marginTop + 1
-									: window.innerHeight - 400;
+								box.marginTop + 2 < window.innerHeight - 300
+									? box.marginTop + 2
+									: window.innerHeight - 300;
 							return {
 								...box,
 								marginTop: marginTop
@@ -91,7 +91,7 @@ const App = () => {
 				setBoxes((boxes) =>
 					boxes.map((box) => {
 						if (box.id === boxId) {
-							const marginLeft = box.marginLeft - 1 > 0 ? box.marginLeft - 1 : 0;
+							const marginLeft = box.marginLeft - 2 > 0 ? box.marginLeft - 2 : 0;
 							return {
 								...box,
 								marginLeft
@@ -107,8 +107,8 @@ const App = () => {
 					boxes.map((box) => {
 						if (box.id === boxId) {
 							const marginLeft =
-								box.marginLeft + 1 < window.innerWidth - 400
-									? box.marginLeft + 1
+								box.marginLeft + 2 < window.innerWidth - 400
+									? box.marginLeft + 2
 									: window.innerWidth - 400;
 							return {
 								...box,
@@ -137,17 +137,16 @@ const App = () => {
 	return (
 		<div className="App" style={{ height: '100vh', width: '100%' }}>
 			<div>
-				<button onClick={addNewBox}>Add box</button>
+				<button onClick={addNewBox} className="add-button">
+					Add box
+				</button>
 			</div>
 			<div
 				style={{
-          margin: 'auto',
-          marginTop: '70px',
-          height: '70vh',
-					boxShadow: '0px 0px 20px #424242',
-          border: '2px splid blue',
-          width: `${window.innerWidth - 300}px`
+					width: `${window.innerWidth - 300}px`,
+					height: `${window.innerHeight - 200}px`
 				}}
+				className="box-area"
 			>
 				{boxes.map((item) => {
 					if (!item) return '';
@@ -160,6 +159,8 @@ const App = () => {
 							marginTop={item.marginTop}
 							handleBoxClick={handleBoxClick}
 							selectedBox={selectedBox}
+							bgColor={item.bgColor}
+							borderColor={item.borderColor}
 						/>
 					);
 				})}
@@ -169,5 +170,3 @@ const App = () => {
 };
 
 export default App;
-
-
